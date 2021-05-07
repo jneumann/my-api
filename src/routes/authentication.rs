@@ -1,14 +1,14 @@
-use crate::custom_types::{
-    WebResult,
-    Users,
-};
+use crate::auth::*;
+use crate::custom_types::*;
 use crate::error::Error::*;
-use crate::auth;
-use serde::{Deserialize, Serialize};
+use serde::{
+    Deserialize,
+    Serialize,
+};
 use warp::{
     reject,
     reply,
-    Reply,
+    Reply
 };
 
 #[derive(Deserialize)]
@@ -28,7 +28,7 @@ pub async fn login_handler(users: Users, body: LoginRequest) -> WebResult<impl R
         .find(|(_uid, user)| user.email == body.email && user.pw == body.pw)
     {
         Some((uid, user)) => {
-            let token = auth::create_jwt(&uid, &auth::Role::from_str(&user.role))
+            let token = create_jwt(&uid, &Role::from_str(&user.role))
                 .map_err(|e| reject::custom(e))?;
             Ok(reply::json(&LoginResponse { token }))
         }

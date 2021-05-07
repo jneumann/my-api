@@ -1,7 +1,8 @@
+use mobc_postgres::{tokio_postgres};
 use serde::Serialize;
 use std::convert::Infallible;
 use thiserror::Error;
-use warp::{http::StatusCode, Rejection, Reply};
+use warp::{http::StatusCode, Reply, Rejection};
 
 #[derive(Error, Debug)]
 pub enum Error {
@@ -17,6 +18,14 @@ pub enum Error {
     InvalidAuthHeaderError,
     #[error("no permission")]
     NoPermissionError,
+    #[error("error getting connection from DB pool: {0}")]
+    DBPoolError(mobc::Error<tokio_postgres::Error>),
+    #[error("error executing DB query: {0}")]
+    DBQueryError(#[from] tokio_postgres::Error),
+    #[error("error creating table: {0}")]
+    DBInitError(tokio_postgres::Error),
+    #[error("error reading file: {0}")]
+    ReadFileError(#[from] std::io::Error),
 }
 
 #[derive(Serialize, Debug)]
@@ -38,6 +47,10 @@ pub async fn handle_rejection(err: Rejection) -> std::result::Result<impl Reply,
             Error::JWTTokenCreationError => (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 "Internal Server Error".to_string(),
+            ),
+            Error::DBQueryError(_) => (
+                StatusCode::BAD_REQUEST,
+                "Could not Execute request".to_string()
             ),
             _ => (StatusCode::BAD_REQUEST, e.to_string()),
         }

@@ -1,16 +1,26 @@
-use crate::custom_types::{
-    WebResult,
-    Result
-};
+use chrono::Utc;
 use crate::error::Error::*;
-use chrono::prelude::*;
-use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation};
-use serde::{Deserialize, Serialize};
+use crate::custom_types::*;
+use jsonwebtoken::{
+    decode,
+    encode,
+    Algorithm,
+    DecodingKey,
+    EncodingKey,
+    Header,
+    Validation
+};
+use serde::{
+    Serialize,
+    Deserialize,
+};
 use std::fmt;
 use warp::{
     filters::header::headers_cloned,
     http::header::{HeaderMap, HeaderValue, AUTHORIZATION},
-    reject, Filter, Rejection,
+    reject,
+    Filter,
+    Rejection,
 };
 
 const BEARER: &str = "Bearer ";

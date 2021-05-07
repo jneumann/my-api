@@ -1,19 +1,35 @@
-use auth::{with_auth};
-use std::collections::HashMap;
-use std::convert::Infallible;
 use std::sync::Arc;
-use warp::{ Filter};
 
 mod auth;
-mod error;
-mod routes;
 mod custom_types;
+mod data;
+mod db;
+mod error;
+mod handler;
+mod routes;
 
-use custom_types::*;
+use crate::auth::*;
+use crate::custom_types::*;
+use crate::db::setup::{
+    with_db
+};
+use std::collections::HashMap;
+use std::convert::Infallible;
+use warp::Filter;
 
 #[tokio::main]
 async fn main() {
+    let db_pool = db::setup::create_pool().expect("database pool can be created");
+
+    db::setup::init_db(&db_pool)
+        .await
+        .expect("database can be initialized");
+
     let users = Arc::new(init_users());
+
+    let health_route = warp::path!("health")
+        .and(with_db(db_pool.clone()))
+        .and_then(handler::health_handler);
 
     let login_route = warp::path!("login")
         .and(warp::post())
@@ -29,9 +45,38 @@ async fn main() {
         .and(with_auth(auth::Role::Admin))
         .and_then(routes::authentication::admin_handler);
 
+    let todo = warp::path("todo");
+    let todo_routes = todo
+	.and(warp::get())
+	.and(with_auth(auth::Role::Admin))
+	.and(warp::query())
+	.and(with_db(db_pool.clone()))
+	.and_then(handler::list_todos_handler)
+	.or(todo
+	    .and(warp::post())
+	    .and(with_auth(auth::Role::User))
+	    .and(warp::body::json())
+	    .and(with_db(db_pool.clone()))
+	    .and_then(handler::create_todo_handler))
+	.or(todo
+	    .and(warp::put())
+	    .and(with_auth(auth::Role::User))
+	    .and(warp::path::param())
+	    .and(warp::body::json())
+	    .and(with_db(db_pool.clone()))
+	    .and_then(handler::update_todo_handler))
+	.or(todo
+	    .and(warp::delete())
+	    .and(with_auth(auth::Role::User))
+	    .and(warp::path::param())
+	    .and(with_db(db_pool.clone()))
+	    .and_then(handler::delete_todo_handler));
+
     let routes = login_route
+        .or(todo_routes)
         .or(user_route)
         .or(admin_route)
+        .or(health_route)
         .recover(error::handle_rejection);
 
     warp::serve(routes).run(([127, 0, 0, 1], 8000)).await;
