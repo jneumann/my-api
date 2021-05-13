@@ -1,6 +1,7 @@
 use crate::schema::*;
+use serde::Serialize;
 
-#[derive(Queryable)]
+#[derive(Debug, Queryable, Serialize)]
 pub struct Post {
     pub id: i32,
     pub title: String,

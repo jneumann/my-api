@@ -34,7 +34,28 @@ async fn main() {
         .and(warp::post())
         .and(warp::body::json())
         .and(with_db(connection.clone()))
-        .and_then(routes::post::create);
+        .and_then(routes::post::create)
+        .or(
+            post
+                .and(warp::get())
+                .and(with_db(connection.clone()))
+                .and_then(routes::post::read)
+        )
+        .or(
+            post
+                .and(warp::put())
+                .and(warp::path::param())
+                .and(warp::body::json())
+                .and(with_db(connection.clone()))
+                .and_then(routes::post::update)
+        )
+        .or(
+            post
+                .and(warp::delete())
+                .and(warp::path::param())
+                .and(with_db(connection.clone()))
+                .and_then(routes::post::delete)
+        );
 
     //let login_route = warp::path!("login")
     //    .and(warp::post())

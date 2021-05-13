@@ -5,6 +5,8 @@ use crate::models::{
     Post,
 };
 use crate::schema::posts;
+use diesel::ExpressionMethods;
+use diesel::prelude::*;
 use diesel::RunQueryDsl;
 use serde::{
     Deserialize,
@@ -29,7 +31,56 @@ pub async fn create(req: CreatePostRequest, db_pool: DBCon) -> WebResult<impl Re
                 DBQueryError(err)
             });
 
-    Ok(json(&insert.unwrap().id))
+    Ok(json(&insert.unwrap()))
+}
+
+pub async fn read(db_pool: DBCon) -> WebResult<impl Reply> {
+    use crate::schema::posts::dsl::*;
+
+    let post_query = posts
+        .limit(5)
+        .load::<Post>(&db_pool)
+        .map_err(|err| {
+            DBQueryError(err)
+        });
+
+    Ok(json(&post_query.unwrap()))
+}
+
+pub async fn update(
+    post_id: i32,
+    req: CreatePostRequest,
+    db_pool: DBCon) -> WebResult<impl Reply> {
+    use crate::schema::posts::dsl::*;
+
+    let update: std::result::Result<Post, crate::error::Error> = diesel::update(posts.find(post_id))
+            .set((
+                title.eq(req.title),
+                body.eq(req.body)
+            ))
+            .get_result(&db_pool)
+            .map_err(|err| {
+                DBQueryError(err)
+            });
+
+    Ok(json(&update.unwrap()))
+}
+
+pub async fn delete( post_id: i32, db_pool: DBCon) -> WebResult<impl Reply> {
+    use crate::schema::posts::dsl::*;
+
+    let response = diesel::delete(posts.filter(id.eq(post_id)))
+        .execute(&db_pool)
+        .map_err(|err| {
+            DBQueryError(err)
+        });
+
+    //match response {
+    //    Ok(o) => Ok(json(&o)),
+    //    Err(e) => Ok(json(&e))
+    //}
+
+    Ok(json(&response.unwrap()))
 }
 
 //pub async fn create_todo_handler(_: String, body: TodoRequest, db_pool: DBPool) -> WebResult<impl Reply> {

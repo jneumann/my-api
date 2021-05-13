@@ -16,7 +16,7 @@ pub mod post;
 pub async fn health_handler(db_pool: DBCon) -> std::result::Result<impl Reply, Rejection> {
     use crate::schema::posts::dsl::*;
 
-    let results = posts.filter(published.eq(true))
+    let _ = posts.filter(published.eq(true))
         .limit(5)
         .load::<Post>(&db_pool)
         .map_err(|err| {
