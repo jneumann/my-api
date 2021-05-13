@@ -1,12 +1,12 @@
 use crate::error::Error;
-use mobc_postgres::{tokio_postgres, PgConnectionManager};
-use mobc::{
-    Connection,
-    Pool
+use diesel::pg::PgConnection;
+use diesel::r2d2::{
+    Pool,
+    PooledConnection,
+    ConnectionManager,
+    //PoolError
 };
-use std::collections::HashMap;
-use std::sync::Arc;
-use tokio_postgres::NoTls;
+//use std::sync::Arc;
 use warp::Rejection;
 
 #[derive(Clone)]
@@ -19,6 +19,6 @@ pub struct User {
 
 pub type Result<T> = std::result::Result<T, Error>;
 pub type WebResult<T> = std::result::Result<T, Rejection>;
-pub type Users = Arc<HashMap<String, User>>;
-pub type DBCon = Connection<PgConnectionManager<NoTls>>;
-pub type DBPool = Pool<PgConnectionManager<NoTls>>;
+//pub type Users = Arc<HashMap<String, User>>;
+pub type DBPool = Pool<ConnectionManager<PgConnection>>;
+pub type DBCon = PooledConnection<ConnectionManager<PgConnection>>;

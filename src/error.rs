@@ -1,4 +1,3 @@
-use mobc_postgres::{tokio_postgres};
 use serde::Serialize;
 use std::convert::Infallible;
 use thiserror::Error;
@@ -19,11 +18,11 @@ pub enum Error {
     #[error("no permission")]
     NoPermissionError,
     #[error("error getting connection from DB pool: {0}")]
-    DBPoolError(mobc::Error<tokio_postgres::Error>),
+    DBPoolError(r2d2::Error),
     #[error("error executing DB query: {0}")]
-    DBQueryError(#[from] tokio_postgres::Error),
+    DBQueryError(diesel::result::Error),
     #[error("error creating table: {0}")]
-    DBInitError(tokio_postgres::Error),
+    DBInitError(r2d2::Error),
     #[error("error reading file: {0}")]
     ReadFileError(#[from] std::io::Error),
 }

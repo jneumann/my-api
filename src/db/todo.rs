@@ -6,7 +6,6 @@ use crate::custom_types::*;
 use crate::data::*;
 use crate::db::setup::*;
 use crate::error::Error::*;
-use mobc_postgres::tokio_postgres::Row;
 
 pub const TABLE: &str = "todo";
 

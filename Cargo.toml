@@ -17,8 +17,11 @@ thiserror = "1.0"
 chrono = { version = "0.4", features = ["serde"] }
 env_logger = "0.5.12"
 log = "0.4.6"
-mobc-postgres = { version = "0.5", features = ["with-chrono-0_4"] }
-mobc = "0.5"
+# mobc-postgres = { version = "0.5", features = ["with-chrono-0_4"] }
+# mobc = "0.5"
+diesel = { version = "*", features = ["postgres", "r2d2"] }
+dotenv = "*"
+r2d2 = "*"
 
 [profile.dev]
 debug = 2
