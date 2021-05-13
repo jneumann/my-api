@@ -16,11 +16,6 @@ use warp::{
 //const DB_POOL_MAX_IDLE: u64 = 8;
 //const DB_POOL_TIMEOUT_SECONDS: u64 = 15;
 
-pub fn create_pool() -> DBPool {
-    let database_url =  "postgres://root:password@127.0.0.1:5432/api";
-    init_pool(&database_url).expect("Failed to create pool")
-}
-
 fn init_pool(database_url: &str) -> Result<DBPool> {
     let manager = ConnectionManager::<PgConnection>::new(database_url);
     Pool::builder()

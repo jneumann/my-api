@@ -20,7 +20,7 @@ pub struct CreatePostRequest {
     pub body: String,
 }
 
-pub async fn create(req: CreatePostRequest, db_pool: DBCon) -> WebResult<impl Reply> {
+pub async fn create(_: String, req: CreatePostRequest, db_pool: DBCon) -> WebResult<impl Reply> {
     let insert: std::result::Result<Post, crate::error::Error> = diesel::insert_into(posts::table)
             .values(NewPost {
                 title: req.title,
@@ -48,6 +48,7 @@ pub async fn read(db_pool: DBCon) -> WebResult<impl Reply> {
 }
 
 pub async fn update(
+    _: String, 
     post_id: i32,
     req: CreatePostRequest,
     db_pool: DBCon) -> WebResult<impl Reply> {
@@ -66,7 +67,7 @@ pub async fn update(
     Ok(json(&update.unwrap()))
 }
 
-pub async fn delete( post_id: i32, db_pool: DBCon) -> WebResult<impl Reply> {
+pub async fn delete(_: String,  post_id: i32, db_pool: DBCon) -> WebResult<impl Reply> {
     use crate::schema::posts::dsl::*;
 
     let response = diesel::delete(posts.filter(id.eq(post_id)))

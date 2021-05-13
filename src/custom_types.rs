@@ -6,7 +6,8 @@ use diesel::r2d2::{
     ConnectionManager,
     //PoolError
 };
-//use std::sync::Arc;
+use std::collections::HashMap;
+use std::sync::Arc;
 use warp::Rejection;
 
 #[derive(Clone)]
@@ -19,6 +20,6 @@ pub struct User {
 
 pub type Result<T> = std::result::Result<T, Error>;
 pub type WebResult<T> = std::result::Result<T, Rejection>;
-//pub type Users = Arc<HashMap<String, User>>;
+pub type Users = Arc<HashMap<String, User>>;
 pub type DBPool = Pool<ConnectionManager<PgConnection>>;
 pub type DBCon = PooledConnection<ConnectionManager<PgConnection>>;

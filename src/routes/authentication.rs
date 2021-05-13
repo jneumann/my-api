@@ -35,11 +35,3 @@ pub async fn login_handler(users: Users, body: LoginRequest) -> WebResult<impl R
         None => Err(reject::custom(WrongCredentialsError)),
     }
 }
-
-pub async fn user_handler(uid: String) -> WebResult<impl Reply> {
-    Ok(format!("Hello User {}", uid))
-}
-
-pub async fn admin_handler(uid: String) -> WebResult<impl Reply> {
-    Ok(format!("Hello Admin {}", uid))
-}

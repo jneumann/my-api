@@ -9,7 +9,7 @@ use warp::{
     Rejection,
 };
 
-//pub mod authentication;
+pub mod authentication;
 //pub mod todo;
 pub mod post;
 
