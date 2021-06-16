@@ -1,9 +1,9 @@
 table! {
     posts (id) {
         id -> Int4,
-        name -> Nullable<Varchar>,
-        created_at -> Nullable<Timestamptz>,
-        published -> Nullable<Bool>,
+        title -> Varchar,
+        body -> Varchar,
+        published -> Bool,
     }
 }
 
@@ -14,6 +14,8 @@ table! {
         model -> Nullable<Varchar>,
         vin -> Nullable<Varchar>,
         color -> Nullable<Varchar>,
+        starting_odometer -> Nullable<Numeric>,
+        current_odometer -> Nullable<Numeric>,
         created_at -> Nullable<Timestamptz>,
     }
 }
