@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS vehicles
+CREATE TABLE IF NOT EXISTS fillup
 (
     id SERIAL PRIMARY KEY NOT NULL,
     vehicle INTEGER,
@@ -6,5 +6,5 @@ CREATE TABLE IF NOT EXISTS vehicles
     cost NUMERIC(5, 2),
     quantity NUMERIC(4, 1),
     miles NUMERIC(5, 1),
-    created_at timestamp with time zone DEFAULT (now() at time zone 'utc')
+    created_at timestamp with time zone DEFAULT (now() at time zone 'utc') NOT NULL
 )

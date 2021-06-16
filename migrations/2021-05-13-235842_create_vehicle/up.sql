@@ -7,5 +7,5 @@ CREATE TABLE IF NOT EXISTS vehicles
     color VARCHAR(255),
     starting_odometer NUMERIC(8, 1),
     current_odometer NUMERIC(8, 1),
-    created_at timestamp with time zone DEFAULT (now() at time zone 'utc')
+    created_at timestamp with time zone DEFAULT (now() at time zone 'utc') NOT NULL
 )
